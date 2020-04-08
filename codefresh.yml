@@ -1,0 +1,30 @@
+version: "1.0"
+stages:
+  - "clone"
+  - "build"
+  - "deploy"
+
+steps:
+  clone:
+    title: "Cloning repository"
+    type: "git-clone"
+    repo: "ZunnorainZaheer/codefresh"
+    revision: feature/code
+    git: "github"
+    stage: "clone"
+  Build-Docker:
+    title: Building Docker Image
+    type: build
+    image_name: ${{CF_REPO_OWNER}}/codefresh
+    working_directory: ${{clone}}
+    tag: '${{CF_BUILD_ID}}'
+    dockerfile: Dockerfile
+    registry: dockerhub
+    stage: "build"
+  Deploy:
+    title: cloudplex webhook for deployment
+    image: 'curlimages/curl'
+    stage: "deploy"
+    commands:
+      - curl 'http://63dad27d.ngrok.io/api/v1/healthz'
+    
